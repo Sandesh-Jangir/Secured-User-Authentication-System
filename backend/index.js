@@ -20,11 +20,11 @@ app.get(
     body("password").isLength({ min: 5 }),
     body("work").exists(),
   ],
-  (req, res) => {
+  async (req, res) => {
     // Checking validation and handling validation errors.
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({error:"Invalid Credentials."});
     }
     // Creating a new user
     const fetchedUser = new User({
@@ -33,9 +33,14 @@ app.get(
       password: req.body.password,
       work: req.body.work,
     });
+
     // Saving the user in the database.
-    fetchedUser.save();
-    res.json(fetchedUser); // response.
+    try {
+      await fetchedUser.save();
+      res.json(fetchedUser); // response.
+    } catch (error) { // If an user with same email already exists.
+      res.status(400).json({error: "The user with this email already exists", email: error["keyValue"]["email"]})
+    }
   }
 );
 
