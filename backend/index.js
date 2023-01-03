@@ -3,6 +3,7 @@ const app = express();
 const connectToMongo = require("./database");
 const User = require("./UserSchema");
 const { body, validationResult } = require("express-validator");
+const bcryptjs = require("bcryptjs")
 const port = 8000;
 
 // Connecting To DataBase
@@ -11,7 +12,9 @@ connectToMongo();
 // To parse request json
 app.use(express.json());
 
-app.get(
+
+// Adding the user to the database.
+app.post(
   "/api/signup",
   // Adding validations for request values.
   [
@@ -26,18 +29,21 @@ app.get(
     if (!errors.isEmpty()) {
       return res.status(400).json({error:"Invalid Credentials."});
     }
+    // Hashing the password.
+    let salt = await bcryptjs.genSalt(10);
+    let hashedPassword = await bcryptjs.hash(req.body.password, salt);
     // Creating a new user
     const fetchedUser = new User({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password,
+      password: hashedPassword,
       work: req.body.work,
     });
 
     // Saving the user in the database.
     try {
       await fetchedUser.save();
-      res.json(fetchedUser); // response.
+      res.json({success: true, user: fetchedUser}); // response.
     } catch (error) { // If an user with same email already exists.
       res.status(400).json({error: "The user with this email already exists", email: error["keyValue"]["email"]})
     }
