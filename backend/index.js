@@ -50,6 +50,26 @@ app.post(
   }
 );
 
+// Logging in the user.
+app.post("/api/login", async (req,res)=>{
+  const {email, password} = req.body;// Email & password from the request.
+
+  // Finding the user.
+  const fetchedUser = await User.findOne({email}).select("")
+  try {
+    const passwordCompared = await bcryptjs.compare(password, fetchedUser.password) // Comparing the passwords.
+    // If the user with the requested email and password exists.
+    if(fetchedUser && passwordCompared){
+      return res.json({success: true, user: fetchedUser})
+    }else{
+      res.status(400).json({success:false, error: "Invalid Credentials."})
+    }
+  } catch (error) { // If the user with the given email does not exists. 
+    res.status(404).json({success:false, error: "user not found."})
+  }
+
+})
+
 app.listen(port, () => {
   console.log(`Application listening on http://localhost:${port}`);
 });
