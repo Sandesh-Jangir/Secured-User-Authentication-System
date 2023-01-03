@@ -4,6 +4,7 @@ const connectToMongo = require("./database");
 const User = require("./UserSchema");
 const { body, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const port = 8000;
 
 // Connecting To DataBase
@@ -11,6 +12,9 @@ connectToMongo();
 
 // To parse request json
 app.use(express.json());
+
+// JWT Secret. [Idealy should not be in public code].
+const JWT_SECRET = "secret@$example.";
 
 // Adding the user to the database.
 app.post(
@@ -42,7 +46,15 @@ app.post(
     // Saving the user in the database.
     try {
       await fetchedUser.save();
-      res.json({ success: true, user: fetchedUser }); // response.
+      // Generating jwt payload.
+      const webTokenPayload = {
+        webTokenUser: {
+          id: fetchedUser.id,
+        },
+      };
+      // Signing JWT Token.
+      const authToken = jwt.sign(webTokenPayload, JWT_SECRET);
+      res.json({ success: true, authToken }); // response.
     } catch (error) {
       // If an user with same email already exists.
       res.status(400).json({
@@ -65,7 +77,7 @@ app.post(
       return res.status(400).json({ error: "Invalid Credentials." });
     }
     // Email & password from the request body.
-    const { email, password } = req.body; 
+    const { email, password } = req.body;
     // Finding the user.
     const fetchedUser = await User.findOne({ email }).select("");
     try {
@@ -73,10 +85,18 @@ app.post(
       const passwordCompared = await bcryptjs.compare(
         password,
         fetchedUser.password
-      ); 
+      );
       // If the user with the requested email and password exists.
       if (fetchedUser && passwordCompared) {
-        return res.json({ success: true, user: fetchedUser });
+        // Generating jwt payload.
+        const webTokenPayload = {
+          webTokenUser: {
+            id: fetchedUser.id,
+          },
+        };
+        // Signing JWT Token.
+        const authToken = jwt.sign(webTokenPayload, JWT_SECRET);
+        return res.json({ success: true, authToken }); // response.
       } else {
         res.status(400).json({ success: false, error: "Invalid Credentials." });
       }
