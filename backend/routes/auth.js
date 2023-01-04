@@ -4,6 +4,7 @@ const User = require("../models/UserSchema");
 const { body, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticateToken = require("../middlewares/authenticateToken")
 
 // JWT Secret. [Idealy should not be in public code].
 const JWT_SECRET = "secret@$example.";
@@ -98,5 +99,12 @@ router.post(
     }
   }
 );
+
+// Authenticating the token and then sending the user from token payload as response.
+router.post("/auth-token", authenticateToken, async(req, res)=>{
+    // Fetching the verified token's user from the database.
+    const tokenVerifiedUser = await User.findOne({_id: req.user.id}).select("-password")
+    res.json({success:true, user: tokenVerifiedUser})// response.
+})
 
 module.exports = router;
