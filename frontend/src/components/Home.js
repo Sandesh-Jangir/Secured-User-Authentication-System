@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "../styles/main.css"
 import "../styles/home.css"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Home = () => {
+  // Redirect directly to "/dashboard" if the token exists.
+  const navigate = useNavigate(); // For redirecting
+  useEffect(()=>{
+    const token = localStorage.getItem("authToken") // getting the token from the localStorage.
+    if (token !== null){ 
+      console.log("in if.")
+      navigate("/dashboard") // redirecting.
+    }
+  })
   return (
     <div className='container'>
         <h1>It seems you've not made a registry yet !</h1>
