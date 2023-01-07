@@ -5,10 +5,10 @@ const JWT_SECRET = "secret@$example.";
 
 const authenticateToken = (req, res, next)=>{
     // Fetching token from request header.
-    const fetchedToken = req.header('authentication-token');
+    const fetchedToken = req.header('authtoken');
     // If authentication-token not found in the request header.
     if(!fetchedToken){
-        return res.status(401).json({success: false, error: "Please enter a valid token."})
+        return res.status(401).json({success: false, error: "Please enter a valid token.", fetchedToken})
     }
 
     try {

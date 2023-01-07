@@ -31,7 +31,7 @@ const Login = () => {
   };
   return (
     <>
-      <h1>We're Glag Seeing You Back</h1>
+      <h1>We're Glad Seeing You Back</h1>
       <form onSubmit={handleSubmit} className="login-form">
         <input type="email" id="email" placeholder="authorized@email" />
         <input type="password" id="password" placeholder="password" />

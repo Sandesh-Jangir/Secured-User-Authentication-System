@@ -32,8 +32,8 @@ const SignUp = () => {
       const data = request['data']; // reponse data
       // If user is created with no errors then add the auth-token to the local storage.
       if(data["success"]){
-        localStorage.setItem("authtoken", data["authToken"])
-        navigate("/dashboard") // Redirect to dashboard component (which we'll create later).
+        localStorage.setItem("authToken", data["authToken"])
+        navigate("/dashboard") // Redirect to dashboard component.
       }
     } catch (error) { // For anonymous errors.
       console.log(error)
