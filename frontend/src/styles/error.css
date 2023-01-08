@@ -1,0 +1,22 @@
+.error{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 35, 35, 0.486);
+    color: red;
+    border-left: 3.5px solid red;
+    text-align: center;
+    font-size: 1rem;
+    position: relative;
+}
+.closeError{
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: red;
+    font-size: 20px;
+    position: absolute;
+    right: 20px;
+}

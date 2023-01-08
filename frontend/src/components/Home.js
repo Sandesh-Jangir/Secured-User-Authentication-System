@@ -9,7 +9,6 @@ const Home = () => {
   useEffect(()=>{
     const token = localStorage.getItem("authToken") // getting the token from the localStorage.
     if (token !== null){ 
-      console.log("in if.")
       navigate("/dashboard") // redirecting.
     }
   })

@@ -1,11 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import "../styles/main.css";
 import "../styles/login.css";
 import axios from "axios";
 import {useNavigate} from "react-router-dom"
+import Error from "./Error";
 
 const Login = () => {
+  // Error states.
+  const [errorOccured, setErrorOccured] = useState(false)
+  const [error, setError] = useState("")
+  // Hook for redirecting.
   const navigate = useNavigate();
+  // Function to run on submit.
   const handleSubmit = async (e) => {
     // Preventing from default reload on submit.
     e.preventDefault();
@@ -25,12 +31,14 @@ const Login = () => {
         localStorage.setItem("authToken", response["authToken"])
         navigate("/dashboard") // Redirect to dashboard component.
       }
-    } catch (error) { // For anonymous errors.
-      console.log(error)
+    } catch (err) { // If errors occured.
+      setErrorOccured(true)
+      setError(err["response"]["data"]["error"]);
     }
   };
   return (
     <>
+    {errorOccured? <Error message = {error}/>:""}
       <h1>We're Glad Seeing You Back</h1>
       <form onSubmit={handleSubmit} className="login-form">
         <input type="email" id="email" placeholder="authorized@email" />
